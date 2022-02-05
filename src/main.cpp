@@ -41,27 +41,14 @@ long tiempo_alt;
 bool ajuste_pos=false;
 bool ajuste_cal=false;
 
-long tiempo_pos;
-
 long cooldown=0;
 bool error=false;
 
-long sec=0;
-long LoopTime=0;
-bool setupp=true;
-long tiempoVat;
-long tiempo_pid=0;
 long tiempo_bajada=0;
-long tiempo_log=0;
-
-long tiempo_lidar=0;
-long tiempo_subida=0;
-long tiempo_calentando=0;
 
 long lop=0;
 int lt=0;
 
-long tiempo_init_vuelo=0;
 bool vateria_suficiente=true;
 
 float estado_float(){
@@ -128,9 +115,6 @@ void loop(){
 
   lt=millis()-lop;
   lop=millis();
-  //Serial.print("dt loop: ");
-  //Serial.println(lt);
-  //Serial.println(pos.pos_x);
 
   run();
 

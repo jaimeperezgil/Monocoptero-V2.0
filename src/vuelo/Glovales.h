@@ -24,8 +24,6 @@ typedef struct poss{
 };
 extern poss pos;
 
-extern double giro_update;
-
 extern double opflow_pos_x;
 extern double opflow_pos_y;
 extern double opflow_vel_x;
@@ -51,10 +49,7 @@ extern byte pDOP;
 
 extern double integral_altitud;
 
-extern int TFminival;
-
 extern float voltage;
-extern unsigned long aptTime;
 extern int altitud;
 extern double vel_alt;
 extern unsigned long tiempo;

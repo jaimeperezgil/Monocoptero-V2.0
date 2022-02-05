@@ -2,7 +2,7 @@
 #pragma once
 #include "Arduino.h"
 #include "Ajustes.h"
-#include "soporte/Glovales.h"
+#include "vuelo/Glovales.h"
 
 #define TFMINI_BAUDRATE   115200
 #define TFMINI_DEBUGMODE  0

@@ -1,25 +1,25 @@
 
 #include <Arduino.h>
-#include "soporte/Glovales.h"
+#include "vuelo/Glovales.h"
 
 #include "Ajustes.h"
-#include "soporte/Control.h"
+#include "vuelo/Control.h"
 #include "salida/Motor.h"
 #include "entrada/Estimador.h"
 
-#include "soporte/filter.h"
+#include "vuelo/filter.h"
 #include <EEPROM.h>
-#include "soporte/EEPROMAnything.h"
+#include "vuelo/EEPROMAnything.h"
 #include "comunicaciones/Telemetria.h"
-#include "soporte/data_log.h"
+#include "vuelo/data_log.h"
 #include "entrada/Opflow.h"
 #include "entrada/lidar.h"
 #include "salida/mixer.h"
 #include "salida/beep.h"
 
-#include "soporte/data_log.h"
-#include "soporte/navegacion.h"
-#include "soporte/planificador.h"
+#include "vuelo/data_log.h"
+#include "vuelo/navegacion.h"
+#include "vuelo/planificador.h"
 
 pt1Filter_t f;
 

@@ -1,7 +1,7 @@
 
 #include "beep.h"
 #include "Ajustes.h"
-#include "soporte/Glovales.h"
+#include "vuelo/Glovales.h"
 
 void beep_setup(){
 return;

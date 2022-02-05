@@ -2,10 +2,10 @@
 #include "Control.h"
 
 #include "data/Curba_motor.h"
-#include "soporte/filter.h"
-#include "soporte/PID.h"
+#include "vuelo/filter.h"
+#include "vuelo/PID.h"
 #include "salida/Motor.h"
-#include "soporte/data_log.h"
+#include "vuelo/data_log.h"
 #include "Matrices/Multiplicaccion_matrices.h"
 
 using namespace BLA;

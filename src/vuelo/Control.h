@@ -2,7 +2,7 @@
 #pragma once
 
 #include <Arduino.h>
-#include "soporte/Glovales.h"
+#include "vuelo/Glovales.h"
 
 void pid_setup();
 void controlador(float dt);

@@ -6,7 +6,7 @@
 #include <Arduino.h>
 #include <Ajustes.h>
 #include <vector>
-#include "soporte/Glovales.h"
+#include "vuelo/Glovales.h"
 
 void log_setup();
 void SD_write();

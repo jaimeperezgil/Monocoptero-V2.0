@@ -17,8 +17,8 @@ Aterrizage
 
 #pragma once
 #include <Arduino.h>
-#include "soporte/Glovales.h"
-#include "soporte/filter.h"
+#include "vuelo/Glovales.h"
+#include "vuelo/filter.h"
 
 void init_camino();
 void descargar_camino();

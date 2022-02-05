@@ -1,5 +1,5 @@
 //#pragma once
-#include "soporte/Glovales.h"
+#include "vuelo/Glovales.h"
 
 #include <SPI.h>
 #include <nRF24L01.h>

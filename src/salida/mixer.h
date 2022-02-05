@@ -4,7 +4,7 @@
 #include <Servo.h>
 #include <Arduino.h>
 #include <Ajustes.h>
-#include "soporte/Glovales.h"
+#include "vuelo/Glovales.h"
 
 void mixer();
 void mixer_start();

@@ -106,7 +106,7 @@ void log(float dt){
     data_buf[dir_act]+=",";
     data_buf[dir_act]+=String(vars[i].var(vars[i].inx));
   }
-  Serial.println(data_buf[dir_act]);
+  //Serial.println(data_buf[dir_act]);
   dir_act++;
 }
 

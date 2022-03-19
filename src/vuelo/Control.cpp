@@ -25,10 +25,10 @@ void pid_setup(){
   log_set_canal_double("altitud_setpoint", &altitud_setpoint);
 }
 
-BLA::Matrix<4,6> K={70.7107,        0,     50.0000,    33.3988,        0,    35.9861,
-                          0, 70.7107,     -50.0000,          0,  36.6636,   -35.9861,
-                    70.7107,        0,    -50.0000,    33.3988,        0,   -35.9861,
-                          0, 70.7107,      50.0000,          0,  36.6636,    35.9861};
+BLA::Matrix<4,6> K={53.0330,        0,      37.5000,    32.9225,        0,    25.3628,
+                          0,  53.0330,    -37.5000,          0,   36.2015,   -25.3628,
+                    53.0330,        0,     -37.5000,    32.9225,        0,   -25.3628,
+                          0,  53.0330,     37.5000,          0,   36.2015,    25.3628};
 
 BLA::Matrix<6> x={0,0,0,0,0,0};
 BLA::Matrix<4> u={0,0,0,0};
@@ -48,7 +48,7 @@ void controlador(float dt){
 
   u=K*x;      //LQR
 
-  servo_write(u(0),-u(2),-u(1),u(3));   //Imprimir valores
+  servo_write(u(0),-u(2),-u(1),u(3));   //Escribir valores    servo_write(u(0),u(2),u(1),u(3));
 }
 
 pt1Filter_t filtro_alt;

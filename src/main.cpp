@@ -94,17 +94,17 @@ void setup(){
   log_set_canal_float("voltage", &voltage);
   log_set_canal_int("loop_time", &lt);
 
-  add_poceso("Leer_IMU", &IMU_leer, 5);
+  add_poceso("Leer_IMU", &IMU_leer, 1);
   add_poceso("Leer_optflow", &optflow_leer, 0);
   add_poceso("Integrara_acc", &IMU_pos, 0);
   add_poceso("leer_lidar", &getDistance, 42);
 
-  add_poceso("controlador", &controlador, 6);
+  add_poceso("controlador", &controlador, 1);
   add_poceso("Control_atitud", &altitude, 23, false);
 
   add_poceso("log_datos", &log, 51, false);
-  add_poceso("TLM", &TLM, 16);
-  add_poceso("recibir_datos", &recibir, 7);
+  add_poceso("TLM", &TLM, 16,false);
+  add_poceso("recibir_datos", &recibir, 7,false);
 
   add_poceso("Bateria", &bateria, 101);
 
@@ -117,6 +117,11 @@ void loop(){
   lop=millis();
 
   run();
+
+  //Serial.print(pos.ang_x);
+  //Serial.print(",");
+  //Serial.println(pos.ang_y);
+  if(lt>1)Serial.println(lt);
 
   if(estado==PREPARADO || estado==BLOQUEADO){         //si no estamos volando motor=0
     Potencia_Motor(0);

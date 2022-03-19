@@ -21,6 +21,7 @@ Cambio total de systema de estabilidad frente a otras versiones PID para deg/s y
 
 #define alt 80
 #define potencia_base 1600        //<- necesita ser ajustado
+//#define 
 
 #define calVolt 0.036
 
@@ -62,7 +63,7 @@ Cambio total de systema de estabilidad frente a otras versiones PID para deg/s y
 
 #define vel_descenso 20      //5cm/s
 #define alt_cal 16
-#define alt_corte 5
+#define alt_corte 2
 
 #define tiempo_subir 5
 #define altura_min 25

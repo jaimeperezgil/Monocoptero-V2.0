@@ -26,6 +26,7 @@ void run(){
     for(int i=0;i<procesos.size();i++){
         unsigned int dt=millis()-procesos[i].ultima_eje;
         if(dt>procesos[i].dt_ejecucion && procesos[i].activo){
+            if(dt/1000.f<=0)dt=1;
             procesos[i].funct(dt/1000.f);
             procesos[i].ultima_eje=millis();
         }

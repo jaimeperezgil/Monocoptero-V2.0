@@ -13,19 +13,23 @@ void motor_setup(){
 }
 
 void Potencia_Motor(float p){       //Fuerza del motor en %
-    if(motor_armado){
+    if(motor_armado && (estado==VOLANDO ||estado==ATERRIZAGE ||estado==CALENTANDO ||estado==ENFRIAMIENTO)){
         p=constrain(p,0,100);
         potencia_motor=p;
         pot_motor=p;
         Motor.writeMicroseconds(1000+p*10);
-    }
+    }else{
+        Motor.writeMicroseconds(1000);
+        pot_motor=0;}
 }
 
 void Potencia_Motor_micros(double p){       //Fuerza del motor en microsegundos
-    if(motor_armado){
+    if(motor_armado && (estado==VOLANDO ||estado==ATERRIZAGE ||estado==CALENTANDO ||estado==ENFRIAMIENTO)){
         p=constrain(p,1000,2000);
         potencia_motor=(p-1000)/10;
         pot_motor=map(p,1000,2000,0,100);
         Motor.writeMicroseconds(p);
-    }
+    }else{
+        Motor.writeMicroseconds(1000);
+        pot_motor=0;}
 }

@@ -25,6 +25,8 @@ void TFmini_start(Stream* _streamPtr){
   //pt1FilterInit(&filtro_medi_alt,1,0.1);
 }
 
+double distancia_ant=0;
+
 void getDistance(float dt){
     while(stream->available()>=9){      //Esperar a tener 9 bytes en la cola
       if((0x59 == stream->read()) && (0x59 == stream->read())) // byte 1 and byte 2
@@ -40,7 +42,9 @@ void getDistance(float dt){
         t2 = stream->read(); // byte 6 = Strength_H
         t2 <<= 8;
         t2 += t1;
-        for(int i=0; i<3; i++)stream->read(); // byte 7, 8, 9 are ignored
+        for(int i=0; i<3; i++)stream->read(); // byte 7, 8, 9
       }
     }
+    vel_alt=(distancia_ant-altitud)/dt;      //vel altitud
+    distancia_ant=altitud;
 }

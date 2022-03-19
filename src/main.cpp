@@ -100,7 +100,7 @@ void setup(){
   add_poceso("leer_lidar", &getDistance, 42);
 
   add_poceso("controlador", &controlador, 1);
-  add_poceso("Control_atitud", &altitude, 23, false);
+  //add_poceso("Control_atitud", &altitude, 23, false);
 
   add_poceso("log_datos", &log, 51, false);
   add_poceso("TLM", &TLM, 16,false);
@@ -118,14 +118,10 @@ void loop(){
 
   run();
 
-  //Serial.print(pos.ang_x);
-  //Serial.print(",");
-  //Serial.println(pos.ang_y);
-  if(lt>1)Serial.println(lt);
-
   if(estado==PREPARADO || estado==BLOQUEADO){         //si no estamos volando motor=0
     Potencia_Motor(0);
     beep_reposo();
+    altitud_setpoint=0;
   }
 
   if((digitalRead(boton)==false || inicio_remoto ) && (estado==PREPARADO || estado==ENFRIAMIENTO)){        //Iniciamos la mision

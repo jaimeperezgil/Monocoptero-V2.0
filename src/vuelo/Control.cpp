@@ -25,14 +25,6 @@ void pid_setup(){
   log_set_canal_double("altitud_setpoint", &altitud_setpoint);
 }
 
-BLA::Matrix<4,6> K={53.0330,        0,      37.5000,    32.9225,        0,    25.3628,
-                          0,  53.0330,    -37.5000,          0,   36.2015,   -25.3628,
-                    53.0330,        0,     -37.5000,    32.9225,        0,   -25.3628,
-                          0,  53.0330,     37.5000,          0,   36.2015,    25.3628};
-
-BLA::Matrix<6> x={0,0,0,0,0,0};
-BLA::Matrix<4> u={0,0,0,0};
-
 void controlador(float dt){
 
   //Load vector estados

@@ -164,3 +164,20 @@
         return salida_pos;
     }
 
+    void PD::constantes(double p, double d){
+        Kp=p;
+        Kd=d;
+
+        pt1FilterInit(&filtro_d,10,0.001);
+    }
+
+    double PD::cal(double error){
+        double dt=(micros() - time_ant)/1000000.f;
+        time_ant=micros();
+        //Serial.println(dt,6);
+
+        double salida= error*Kp+pt1FilterApply4(&filtro_d,Kd*((error-error_ant)/dt),5,dt);
+        error_ant=error;
+
+        return salida;
+    }

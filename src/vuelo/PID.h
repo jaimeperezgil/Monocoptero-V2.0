@@ -4,6 +4,18 @@
 #include "vuelo/Glovales.h"
 #include "vuelo/filter.h"
 
+class PD{
+    double Kp, Kd;
+    long time_ant;
+    double error_ant;
+
+    pt1Filter_t filtro_d;
+
+    public:
+    void constantes(double p, double d);
+    double cal(double error);
+};
+
 class PID{
     
     double Kp,Ki,Kd, Kg, Kd_level;

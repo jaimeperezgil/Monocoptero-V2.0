@@ -118,10 +118,9 @@ void loop(){
 
   run();
 
-  //Serial.print(pos.ang_x);
-  //Serial.print(",");
-  //Serial.println(pos.ang_y);
-  if(lt>1)Serial.println(lt);
+  Serial.print(pos.ang_x);
+  Serial.print(",");
+  Serial.println(pos.ang_y);
 
   if(estado==PREPARADO || estado==BLOQUEADO){         //si no estamos volando motor=0
     Potencia_Motor(0);

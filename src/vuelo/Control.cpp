@@ -16,6 +16,15 @@ void reset_PID_integrales(){
   PID_altitud.rest_int();
 }
 
+PD control_vel_x;
+PD control_ang_x;
+
+PD control_vel_y;
+PD control_ang_y;
+
+PD control_vel_z;
+PD control_ang_z;
+
 void pid_setup(){
   
   PID_altitud.PID_constantes(Kp_alt,Ki_alt,Kd_alt,0,400,Kf_alt,0,10);
@@ -23,7 +32,28 @@ void pid_setup(){
 
   log_set_canal_int("altitud",&altitud);
   log_set_canal_double("altitud_setpoint", &altitud_setpoint);
+
+
+  control_vel_x.constantes(35,4);//53   -20 -1
+  control_vel_y.constantes(-35,-4);
+  control_vel_z.constantes(20,0);
+
+  control_ang_x.constantes(5,0.1); //37
+  control_ang_y.constantes(5,0.1);
+  control_ang_z.constantes(6,0);
+
+  /*control_ang_x.constantes(0,0);
+  control_ang_y.constantes(0,0);
+  control_ang_z.constantes(0,0);*/
 }
+
+BLA::Matrix<4,6> K={53.0330,        0,      37.5000,    32.9225,        0,    25.3628,
+                          0,  53.0330,    -37.5000,          0,   36.2015,   -25.3628,
+                    53.0330,        0,     -37.5000,    32.9225,        0,   -25.3628,
+                          0,  53.0330,     37.5000,          0,   36.2015,    25.3628};
+
+BLA::Matrix<6> x={0,0,0,0,0,0};
+BLA::Matrix<4> u={0,0,0,0};
 
 void controlador(float dt){
 
@@ -38,9 +68,27 @@ void controlador(float dt){
   x(2) = (pos.ang_z* 1000 / 57296);   //ejez
   x(5) = -(pos.vel_z* 1000 / 57296);
 
-  u=K*x;      //LQR
+  u=K*x;
 
-  servo_write(u(0),-u(2),-u(1),u(3));   //Escribir valores    servo_write(u(0),u(2),u(1),u(3));
+  float comp_x=control_vel_x.cal((pos.vel_x* 1000 / 57296) + control_ang_x.cal((pos.ang_x* 1000 / 57296)));
+  float comp_y=control_vel_y.cal((pos.vel_y* 1000 / 57296) + control_ang_y.cal((pos.ang_y* 1000 / 57296)));
+  float comp_z=control_vel_z.cal(-(pos.vel_z* 1000 / 57296) + control_ang_z.cal((pos.ang_z* 1000 / 57296)));
+
+  Serial.print(" ");
+  Serial.print(" ");
+  Serial.print(" ");
+  Serial.print(" ");
+  Serial.print(" ");
+  Serial.print(" ");
+  Serial.print(" ");
+  Serial.print(" ");
+  Serial.print(" ");
+  Serial.print(" ");
+  //Serial.println(comp_x);
+
+  mixer(comp_x,comp_y,comp_z);
+  //servo_write(u(0),-comp_x,0,0);
+  //servo_write(u(0),-u(2),-u(1),u(3));   //Escribir valores    servo_write(u(0),u(2),u(1),u(3));
 }
 
 pt1Filter_t filtro_alt;

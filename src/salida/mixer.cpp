@@ -33,28 +33,19 @@ void mixer_centrar(){
     servoYY.write(offsetYY+90);
 }
 
-void mixer(){
+void mixer(float x,float y, float z){
 
-    /*float x = Outputx;
-    float y = Outputy*-1;
-    float z = Outputz;
+    int out1=constrain(x+z,-50,50);
+    int out2=constrain((x*-1)+z,-50,50);
 
-    int out1=constrain(x+offsetX +z,1100,1900);
-    int out2=constrain((x*-1)+offsetXX +z,1100,1900);
+    int out3=constrain(y+z,-50,50);
+    int out4=constrain((y*-1)+z,-50,50);
 
-    int out3=constrain(y+offsetY +z,1100,1900);
-    int out4=constrain((y*-1)+offsetYY +z,1100,1900);
+    servoX.writeMicroseconds((out1*5.555555)+offsetX);
+    servoXX.writeMicroseconds((out2*5.55555)+offsetXX);
 
-    servoX.writeMicroseconds(out1);
-    servoXX.writeMicroseconds(out2);
-
-    servoY.writeMicroseconds(out3);
-    servoYY.writeMicroseconds(out4);
-
-    set_data(38,out1);
-    set_data(39,out2);
-    set_data(40,out3);
-    set_data(41,out4);*/
+    servoY.writeMicroseconds((out3*5.55555)+offsetY);
+    servoYY.writeMicroseconds((out4*5.55555)+offsetYY);
 }
 
 void servo_write(float x, float xx, float y, float yy){

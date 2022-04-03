@@ -34,12 +34,12 @@ void pid_setup(){
   log_set_canal_double("altitud_setpoint", &altitud_setpoint);
 
 
-  control_vel_x.constantes(35,4);//53   -20 -1
-  control_vel_y.constantes(-35,-4);
+  control_vel_x.constantes(20,1);//53   -20 -1
+  control_vel_y.constantes(-20,-1);
   control_vel_z.constantes(20,0);
 
-  control_ang_x.constantes(5,0.1); //37
-  control_ang_y.constantes(5,0.1);
+  control_ang_x.constantes(6.5,0.1); //37
+  control_ang_y.constantes(6.5,0.1);
   control_ang_z.constantes(6,0);
 
   /*control_ang_x.constantes(0,0);

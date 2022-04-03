@@ -176,7 +176,7 @@
         time_ant=micros();
         //Serial.println(dt,6);
 
-        double salida= error*Kp+pt1FilterApply4(&filtro_d,Kd*((error-error_ant)/dt),5,dt);
+        double salida= error*Kp+pt1FilterApply4(&filtro_d,Kd*((error-error_ant)/dt),10,dt);
         error_ant=error;
 
         return salida;

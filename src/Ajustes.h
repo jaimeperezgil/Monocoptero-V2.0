@@ -1,12 +1,4 @@
 
-
-/*
-NOTAS:
-
-Cambio total de systema de estabilidad frente a otras versiones PID para deg/s y fuerza*ang con LPF
-
-*/
-
 #define boton 2
 #define led1 41
 #define led2 40

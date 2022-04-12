@@ -179,7 +179,7 @@
         integral+=error*dt*Ki;
         error+=integral;
 
-        double salida= error*Kp+pt1FilterApply4(&filtro_d,Kd*((error-error_ant)/dt),10,dt);
+        double salida= error*Kp+pt1FilterApply4(&filtro_d,Kd*((error-error_ant)/dt),3,dt);//tiene que ser 3
         error_ant=error;
         
 

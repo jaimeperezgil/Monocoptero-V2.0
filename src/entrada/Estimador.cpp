@@ -52,8 +52,6 @@ void IMU_leer(float dt){
 
   pos.vel_x=pt1FilterApply4(&filtro_gyro_x,-giro.x(),60,dt);    //deg/s  Documentacion dice rad/s pero es deg/s
   pos.vel_y=pt1FilterApply4(&filtro_gyro_x,-giro.y(),60,dt);
-  //pos.vel_x=-giro.x();    //deg/s  Documentacion dice rad/s pero es deg/s
-  //pos.vel_y=-giro.y();
   pos.vel_z=giro.z();
 
   pos.ang_z+=-pos.vel_z*dt;   //integracion de z apartir de giroscopios

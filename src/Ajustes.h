@@ -28,8 +28,8 @@ Cambio total de systema de estabilidad frente a otras versiones PID para deg/s y
 
 #define maxAng 10  //+/- 10
 
-#define adg_x 5         // 7 Ajustar para cambiar punto sobre el que se busca el equilibrio
-#define adg_y 10         //19
+#define adg_x 6         // 7 Ajustar para cambiar punto sobre el que se busca el equilibrio
+#define adg_y 6         //10
 
 #define MAX_data_log 1200         //Suficiente para 1 min de data log
 

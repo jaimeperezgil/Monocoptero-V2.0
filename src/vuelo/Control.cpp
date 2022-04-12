@@ -12,10 +12,6 @@ using namespace BLA;
 
 PID PID_altitud;
 
-void reset_PID_integrales(){
-  PID_altitud.rest_int();
-}
-
 PD control_vel_x;
 PD control_ang_x;
 
@@ -25,6 +21,15 @@ PD control_ang_y;
 PD control_vel_z;
 PD control_ang_z;
 
+void reset_PID_integrales(){
+  PID_altitud.rest_int();
+
+  control_vel_x.reset_i();
+  control_vel_y.reset_i();
+}
+
+double x_i,y_i;
+
 void pid_setup(){
   
   PID_altitud.PID_constantes(Kp_alt,Ki_alt,Kd_alt,0,400,Kf_alt,0,10);
@@ -33,14 +38,16 @@ void pid_setup(){
   log_set_canal_int("altitud",&altitud);
   log_set_canal_double("altitud_setpoint", &altitud_setpoint);
 
+  log_set_canal_double("integral_x", &x_i);
+  log_set_canal_double("integral_y", &y_i);
 
-  control_vel_x.constantes(20,1);//53   -20 -1
-  control_vel_y.constantes(-20,-1);
-  control_vel_z.constantes(20,0);
+  control_vel_x.constantes(15,-0,0.2);//53   -20 -1
+  control_vel_y.constantes(-15,0,-0.2);
+  control_vel_z.constantes(20,0,0);
 
-  control_ang_x.constantes(6.5,0.1); //37
-  control_ang_y.constantes(6.5,0.1);
-  control_ang_z.constantes(6,0);
+  control_ang_x.constantes(5,0.01,0); //37
+  control_ang_y.constantes(5,0.01,0);
+  control_ang_z.constantes(6,0,0);
 
   /*control_ang_x.constantes(0,0);
   control_ang_y.constantes(0,0);
@@ -74,6 +81,7 @@ void controlador(float dt){
   float comp_y=control_vel_y.cal((pos.vel_y* 1000 / 57296) + control_ang_y.cal((pos.ang_y* 1000 / 57296)));
   float comp_z=control_vel_z.cal(-(pos.vel_z* 1000 / 57296) + control_ang_z.cal((pos.ang_z* 1000 / 57296)));
 
+  /*Serial.print(" ");
   Serial.print(" ");
   Serial.print(" ");
   Serial.print(" ");
@@ -82,11 +90,14 @@ void controlador(float dt){
   Serial.print(" ");
   Serial.print(" ");
   Serial.print(" ");
-  Serial.print(" ");
-  Serial.print(" ");
+  Serial.print(" ");*/
   //Serial.println(comp_x);
 
-  mixer(comp_x,comp_y,comp_z);
+  x_i=control_ang_x.get_i();
+  y_i=control_ang_y.get_i();
+
+  mixer(comp_x,comp_y,comp_z,dt);
+  //mixer(0,0,0);
   //servo_write(u(0),-comp_x,0,0);
   //servo_write(u(0),-u(2),-u(1),u(3));   //Escribir valores    servo_write(u(0),u(2),u(1),u(3));
 }

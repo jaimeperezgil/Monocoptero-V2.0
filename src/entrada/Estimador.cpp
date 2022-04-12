@@ -22,6 +22,8 @@ void init_estimador(){
   pt1FilterInit(&filtro_gyro_x,10,0.01);
   pt1FilterInit(&filtro_gyro_y,10,0.01);
 
+  //biquadFilterInit(filtro_gyro_x,60,
+
   log_set_canal_float("ang_x", &pos.ang_x);
   log_set_canal_float("ang_y", &pos.ang_y);
   log_set_canal_float("ang_z", &pos.ang_z);
@@ -48,8 +50,10 @@ void IMU_leer(float dt){
   pos.ang_x=euler.z()+adg_x;
   pos.ang_y=euler.y()+adg_y;
 
-  pos.vel_x=-giro.x();    //deg/s  Documentacion dice rad/s pero es deg/s
-  pos.vel_y=-giro.y();
+  pos.vel_x=pt1FilterApply4(&filtro_gyro_x,-giro.x(),60,dt);    //deg/s  Documentacion dice rad/s pero es deg/s
+  pos.vel_y=pt1FilterApply4(&filtro_gyro_x,-giro.y(),60,dt);
+  //pos.vel_x=-giro.x();    //deg/s  Documentacion dice rad/s pero es deg/s
+  //pos.vel_y=-giro.y();
   pos.vel_z=giro.z();
 
   pos.ang_z+=-pos.vel_z*dt;   //integracion de z apartir de giroscopios

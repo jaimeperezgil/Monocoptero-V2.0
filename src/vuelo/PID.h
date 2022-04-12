@@ -5,15 +5,19 @@
 #include "vuelo/filter.h"
 
 class PD{
-    double Kp, Kd;
+    double Kp, Kd, Ki;
     long time_ant;
     double error_ant;
 
     pt1Filter_t filtro_d;
 
     public:
-    void constantes(double p, double d);
+    void constantes(double p,double i, double d);
     double cal(double error);
+    float get_i();
+    double integral=0;
+
+    void reset_i();
 };
 
 class PID{

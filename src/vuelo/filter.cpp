@@ -6,20 +6,6 @@
 
 #define M_PIf       3.14159265358979323846f
 
-float nullFilterApply(void *filter, float input)
-{
-    //UNUSED(filter);
-    return input;
-}
-
-float nullFilterApply4(void *filter, float input, float f_cut, float dt)
-{
-    //UNUSED(filter);
-    //UNUSED(f_cut);
-    //UNUSED(dt);
-    return input;
-}
-
 // PT1 Low Pass filter
 
 static float pt1ComputeRC(const float f_cut)
@@ -118,7 +104,8 @@ float mediaFilter_est(mediaFilter_t *filtro, float nueva){
 
 
 
-/*
+
+
 
 
 void biquadFilterInitNotch(biquadFilter_t *filter, uint32_t samplingIntervalUs, uint16_t filterFreq, uint16_t cutoffHz)
@@ -128,10 +115,10 @@ void biquadFilterInitNotch(biquadFilter_t *filter, uint32_t samplingIntervalUs, 
 }
 
 // sets up a biquad Filter
-void biquadFilterInitLPF(biquadFilter_t *filter, uint16_t filterFreq, uint32_t samplingIntervalUs)
+/*void biquadFilterInitLPF(biquadFilter_t *filter, uint16_t filterFreq, uint32_t samplingIntervalUs)
 {
     biquadFilterInit(filter, filterFreq, samplingIntervalUs, BIQUAD_Q, FILTER_LPF);
-}
+}*/
 
 
 static void biquadFilterSetupPassthrough(biquadFilter_t *filter)
@@ -151,8 +138,8 @@ void biquadFilterInit(biquadFilter_t *filter, uint16_t filterFreq, uint32_t samp
         // setup variables
         const float sampleRate = 1.0f / ((float)samplingIntervalUs * 0.000001f);
         const float omega = 2.0f * M_PIf * ((float)filterFreq) / sampleRate;
-        const float sn = sin_approx(omega);
-        const float cs = cos_approx(omega);
+        const float sn = sin(omega);
+        const float cs = cos(omega);
         const float alpha = sn / (2 * Q);
 
         float b0, b1, b2;
@@ -213,7 +200,7 @@ float biquadFilterReset(biquadFilter_t *filter, float value)
     return value;
 }
 
-FAST_CODE void biquadFilterUpdate(biquadFilter_t *filter, float filterFreq, uint32_t refreshRate, float Q, biquadFilterType_e filterType)
+void biquadFilterUpdate(biquadFilter_t *filter, float filterFreq, uint32_t refreshRate, float Q, biquadFilterType_e filterType)
 {
     // backup state
     float x1 = filter->x1;
@@ -229,5 +216,3 @@ FAST_CODE void biquadFilterUpdate(biquadFilter_t *filter, float filterFreq, uint
     filter->y1 = y1;
     filter->y2 = y2;
 }
-
-*/

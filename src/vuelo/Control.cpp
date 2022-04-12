@@ -45,8 +45,8 @@ void pid_setup(){
   control_vel_y.constantes(-15,0,-0.2);
   control_vel_z.constantes(20,0,0);
 
-  control_ang_x.constantes(5,0.01,0); //37
-  control_ang_y.constantes(5,0.01,0);
+  control_ang_x.constantes(5,0,0); //37
+  control_ang_y.constantes(5,0,0);
   control_ang_z.constantes(6,0,0);
 
   /*control_ang_x.constantes(0,0);

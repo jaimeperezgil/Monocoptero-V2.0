@@ -48,3 +48,30 @@ void beep_volando(){
         }
     }
 }
+
+long b_emergencia=0;
+bool estado_beep_emergencia=false;
+
+void beep_emergencia(){
+    if(estado_beep_emergencia){
+        tone(buzzer_pin, 20);
+        if(millis()-b_emergencia>=100){    //tiempo encendido
+            b_emergencia=millis();
+            estado_beep_emergencia=false;
+        }
+    }else{
+        noTone(buzzer_pin);
+        if(millis()-b_emergencia>=200){   //timepo apagado
+            b_emergencia=millis();
+            estado_beep_emergencia=true;
+        }
+    }
+}
+
+
+void beep_para(){
+    if(estado_beep_emergencia){
+        estado_beep_emergencia=false;
+        beep_emergencia();
+    }
+}

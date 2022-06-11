@@ -72,8 +72,8 @@ void IMU_pos(float dt){
   if(opflow_update){
     opflow_update=false;
     
-    pos.pos_vel_x=opflow_vel_x*0.8 +pos.pos_vel_x*0.2;
-    pos.pos_vel_y=opflow_vel_y*0.8 +pos.pos_vel_y*0.2;
+    pos.pos_vel_x=opflow_vel_x;//*0.8 +pos.pos_vel_x*0.2;
+    pos.pos_vel_y=opflow_vel_y;//*0.8 +pos.pos_vel_y*0.2;
   }
 
   pos.pos_x+=pos.pos_vel_x*dt;

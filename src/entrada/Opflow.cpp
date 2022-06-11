@@ -246,12 +246,12 @@ void optflow_leer(float dT){
 
                     if(buf[1]==1){
                         opflow_lidar=(int)(int8_t)buf[7]*256+(int)buf[6];
-                        
+
                         opflow_lidar=opflow_lidar/1000;
                     }
 
                     if(buf[1]==2){
-                        opflow_vel_x=(int8_t)buf[6]*256+(int8_t)buf[7];                 //jj
+                        opflow_vel_x=(int8_t)buf[6]*256+(int8_t)buf[7];
                         opflow_vel_y=(int8_t)buf[10]*256+(int8_t)buf[11];
 
                         double dt=micros()-tiempo_opflow;

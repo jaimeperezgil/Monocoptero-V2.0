@@ -101,7 +101,7 @@ void log_set_canal_esp(String n, float (*v)()){
 
 void log(float dt){
   data_buf[dir_act]="";
-  data_buf[dir_act]+=String(millis());
+  data_buf[dir_act]+=String(millis()/1000.f);
   for(int i=0;i<vars.size();i++){
     data_buf[dir_act]+=",";
     data_buf[dir_act]+=String(vars[i].var(vars[i].inx));

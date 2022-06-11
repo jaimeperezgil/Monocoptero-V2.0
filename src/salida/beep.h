@@ -11,3 +11,4 @@ void beep_log_completado();
 void beep_error_inicializacion();
 void beep_bloqueo();
 void beep_para();
+void beep_emergencia();

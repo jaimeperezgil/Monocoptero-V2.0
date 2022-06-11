@@ -36,11 +36,6 @@ extern int offsetXX;
 extern int offsetY;
 extern int offsetYY;
 
-extern double pos_com_x;
-extern double pos_com_y;
-extern double vel_com_x;
-extern double vel_com_y;
-
 extern double pos_setpoint_x;
 extern double pos_setpoint_y;
 

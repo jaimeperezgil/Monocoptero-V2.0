@@ -30,11 +30,6 @@ int offsetXX;
 int offsetY;
 int offsetYY;
 
-double pos_com_x;
-double pos_com_y;
-double vel_com_x;
-double vel_com_y;
-
 bool opflow_update=false;
 
 double integral_altitud=0;

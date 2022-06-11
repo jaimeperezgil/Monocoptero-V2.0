@@ -59,8 +59,10 @@ void bateria(float dt){
   voltage=analogRead(volt)*calVolt;
   if(voltage<19 && voltage>3){      //Sin vateria pero hay una vateria conectada
     vateria_suficiente=false;
+    beep_emergencia();
   }else{
     vateria_suficiente=true;
+    beep_para();
   }
 }
 
@@ -118,9 +120,11 @@ void loop(){
 
   run();
 
-  Serial.print(pos.ang_x);
+  /*Serial.print(pos.pos_vel_x);
   Serial.print(",");
-  Serial.println(pos.ang_y);
+  Serial.println(pos.ang_x);*/
+
+  //Serial.println(voltage);
 
   if(estado==PREPARADO || estado==BLOQUEADO){         //si no estamos volando motor=0
     Potencia_Motor(0);

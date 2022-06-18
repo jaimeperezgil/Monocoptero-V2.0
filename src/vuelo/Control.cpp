@@ -1,7 +1,6 @@
 
 #include "Control.h"
 
-#include "data/Curba_motor.h"
 #include "vuelo/filter.h"
 #include "vuelo/PID.h"
 #include "salida/Motor.h"
@@ -42,7 +41,7 @@ void reset_PID_integrales(){
 double x_i,y_i;
 double pos_comp_x,pos_comp_y,vel_comp_x,vel_comp_y, acc_comp_x, acc_comp_y;
 double ang_vel_deseado_x, ang_vel_deseado_y;
-double limit_x, limit_y;
+//double limit_x, limit_y;
 
 void pid_setup(){
   
@@ -55,25 +54,34 @@ void pid_setup(){
   log_set_canal_double("integral_x", &x_i);
   log_set_canal_double("integral_y", &y_i);
 
-  control_vel_x.constantes(14,-0,0.3);//53   -20 -1
+  //////perfil 1 baterias zippy/////////////////////////
+  /*control_vel_x.constantes(14,-0,0.3);
   control_vel_y.constantes(-14,0,-0.3);
   control_vel_z.constantes(20,0,0);
 
-  control_ang_x.constantes(5,0,0); //37
+  control_ang_x.constantes(5,0,0);
   control_ang_y.constantes(5,0,0);
   control_ang_z.constantes(6,0,0);
 
- // control_acc_x.constantes(0.1,0,0);
-  //control_acc_y.constantes(0.1,0,0);
+  control_pos_x.constantes(0.06,0.005,0.07);
+  control_pos_y.constantes(-0.06,-0.005,-0.07);*/
+  ///////////////////////////////////////////////////////
 
-  //control_pos_vel_x.constantes(0.13,0,0.008);
-  //control_pos_vel_y.constantes(0.13,0,0.008);
-  control_pos_vel_x.constantes(0.04,0,0.04);     //(0.04,0,0)
-  //control_pos_vel_y.constantes(-0.09,0,-0.008);
-  control_pos_vel_y.constantes(0.04,0,0.04);
+  //////perfil 2 baterias turnagy////////////////////////
+  control_vel_x.constantes(14,-0,0.3);
+  control_vel_y.constantes(-14,0,-0.3);
+  control_vel_z.constantes(20,0,0);
 
-  control_pos_x.constantes(0.07,0,0.04);      //0.2
-  control_pos_y.constantes(-0.07,0,0.04);
+  control_ang_x.constantes(5,0,0);
+  control_ang_y.constantes(5,0,0);
+  control_ang_z.constantes(6,0,0);
+
+  control_pos_x.constantes(0.06,0.005,0);
+  control_pos_y.constantes(-0.06,-0.005,-0);
+  ///////////////////////////////////////////////////////
+
+  control_pos_vel_x.constantes(0,0,0.07);
+  control_pos_vel_y.constantes(0,0,-0.07);
 
   pt1FilterInit(&filtro_pos_x,1,0.001);
   pt1FilterInit(&filtro_pos_y,1,0.001);
@@ -119,25 +127,25 @@ void controlador(float dt){
 
   //Load vector estados
 
-  x(0) = (pos.ang_x* 1000 / 57296);   //eje x
-  x(3) = (pos.vel_x* 1000 / 57296);
+  x(0) = (IMU.ang_x* 1000 / 57296);   //eje x
+  x(3) = (IMU.vel_x* 1000 / 57296);
 
-  x(1) = (pos.ang_y* 1000 / 57296);   //eje y
-  x(4) = (pos.vel_y* 1000 / 57296);
+  x(1) = (IMU.ang_y* 1000 / 57296);   //eje y
+  x(4) = (IMU.vel_y* 1000 / 57296);
 
-  x(2) = (pos.ang_z* 1000 / 57296);   //ejez
-  x(5) = -(pos.vel_z* 1000 / 57296);
+  x(2) = (IMU.ang_z* 1000 / 57296);   //ejez
+  x(5) = -(IMU.vel_z* 1000 / 57296);
 
   u=K*x;
 
-  pos_comp_x=control_pos_x.cal(pt1FilterApply3(&filtro_pos_x,pos.pos_x,dt));
-  pos_comp_y=control_pos_y.cal(pt1FilterApply3(&filtro_pos_y,pos.pos_y,dt));
-  
-  //pos_comp_x=constrain(pos_comp_x,-2,2);
-  //pos_comp_y=constrain(pos_comp_y,-2,2);
+  pos_comp_x=control_pos_x.cal(pt1FilterApply3(&filtro_pos_x,pos.pos_x,dt)-pos_setpoint_x);     //Solo Proporcional
+  pos_comp_y=control_pos_y.cal(pt1FilterApply3(&filtro_pos_y,pos.pos_y,dt));//pos_setpoint_y
 
-  vel_comp_x=control_pos_vel_x.cal(pos.pos_vel_x+pos_comp_x);
-  vel_comp_y=control_pos_vel_y.cal(pos.pos_vel_y+pos_comp_y);
+  vel_comp_x=control_pos_vel_x.cal(pt1FilterApply3(&filtro_pos_x,pos.pos_x,dt));      //Solo deriada
+  vel_comp_y=control_pos_vel_y.cal(pt1FilterApply3(&filtro_pos_y,pos.pos_y,dt));
+  
+  pos_comp_x=constrain(pos_comp_x+vel_comp_x,-2,2);
+  pos_comp_y=constrain(pos_comp_y+vel_comp_y,-2,2);
 
   /*if(abs(pos.pos_vel_x+pos_comp_x)>0.05f)
     //limit_x=(pos.pos_vel_x+pos_comp_x)*0.02f;
@@ -154,10 +162,10 @@ void controlador(float dt){
   //acc_comp_x=constrain(atan2(9.8,vel_comp_x), -limit_x, limit_x);
   //acc_comp_y=constrain(atan2(9.8,-vel_comp_y*1000), -limit_y, limit_y);
 
-  acc_comp_x=constraini(vel_comp_x, -limit_x, limit_x);
-  acc_comp_y=constraini(-vel_comp_y, -limit_y, limit_y);
+  //acc_comp_x=constraini(vel_comp_x, -limit_x, limit_x);
+  //acc_comp_y=constraini(-vel_comp_y, -limit_y, limit_y);
 
-  double comp=0;
+  //double comp=0;
 
   /*if(abs(pos.pos_vel_x+pos_comp_x)<0.5f)
     comp=0.01f;
@@ -177,20 +185,20 @@ void controlador(float dt){
     acc_comp_y=0;
   else acc_comp_y=comp;*/
 
-  ang_vel_deseado_x=control_ang_x.cal((pos.ang_x* 1000 / 57296)+pos_comp_x);  //acc_comp_x
-  ang_vel_deseado_y=control_ang_y.cal((pos.ang_y* 1000 / 57296)+pos_comp_y);  //acc_comp_y
+  ang_vel_deseado_x=control_ang_x.cal((IMU.ang_x* 1000 / 57296)+pos_comp_x);  //acc_comp_x
+  ang_vel_deseado_y=control_ang_y.cal((IMU.ang_y* 1000 / 57296)+pos_comp_y);  //acc_comp_y
 
-  double comp_x=control_vel_x.cal((pos.vel_x* 1000 / 57296) + ang_vel_deseado_x);
-  double comp_y=control_vel_y.cal((pos.vel_y* 1000 / 57296) + ang_vel_deseado_y);
-  double comp_z=control_vel_z.cal(-(pos.vel_z* 1000 / 57296) + control_ang_z.cal((pos.ang_z* 1000 / 57296)));
+  double comp_x=control_vel_x.cal((IMU.vel_x* 1000 / 57296) + ang_vel_deseado_x);
+  double comp_y=control_vel_y.cal((IMU.vel_y* 1000 / 57296) + ang_vel_deseado_y);
+  double comp_z=control_vel_z.cal(-(IMU.vel_z* 1000 / 57296) + control_ang_z.cal((IMU.ang_z* 1000 / 57296)));
 
-  //lim_x=((pos.vel_x* 1000 / 57296) + ang_vel_deseado_x)*15.f;
-  //lim_y=((pos.vel_y* 1000 / 57296) + ang_vel_deseado_y)*15.f;
+  //lim_x=((IMU.vel_x* 1000 / 57296) + ang_vel_deseado_x)*15.f;
+  //lim_y=((IMU.vel_y* 1000 / 57296) + ang_vel_deseado_y)*15.f;
 
   //comp_x=constraini(comp_x,-lim_x,lim_x);
   //comp_y=constraini(comp_y,-lim_y,lim_y);
 
-  Serial.print(" ");
+  /*Serial.print(" ");
   Serial.print(" ");
   Serial.print(" ");
   Serial.print(" ");
@@ -200,7 +208,7 @@ void controlador(float dt){
   Serial.print(" ");
   Serial.print(pos.pos_x);
   Serial.print(",");
-  Serial.println(pos.pos_y);
+  Serial.println(pos.pos_y);*/
 
   x_i=control_ang_x.get_i();
   y_i=control_ang_y.get_i();

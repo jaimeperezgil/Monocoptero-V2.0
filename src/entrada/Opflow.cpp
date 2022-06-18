@@ -41,8 +41,8 @@ double giro_acc_y;
 //giro_update
 
 void opflow_giro_update(float dt){
-    giro_acc_x+=pos.vel_x*dt;
-    giro_acc_y+=pos.vel_y*dt;
+    giro_acc_x+=IMU.vel_x*dt;
+    giro_acc_y+=IMU.vel_y*dt;
 
     tiempo_acumulado+=dt;
 }

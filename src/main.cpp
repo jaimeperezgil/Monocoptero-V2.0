@@ -31,9 +31,9 @@ void load_EEPROM(){
   direccion+=EEPROM_readAnything(direccion,offsetYY);
 
   direccion=20;
-  pos.of_imu_x=map(EEPROM.read(direccion),0,255,-127,127);
+  //pos.of_imu_x=map(EEPROM.read(direccion),0,255,-127,127);
   direccion++;
-  pos.of_imu_y=map(EEPROM.read(direccion),0,255,-127,127);
+  //pos.of_imu_y=map(EEPROM.read(direccion),0,255,-127,127);
 }
 
 long tiempo_alt;
@@ -62,7 +62,7 @@ void bateria(float dt){
     beep_emergencia();
   }else{
     vateria_suficiente=true;
-    beep_para();
+    //beep_para();
   }
 }
 
@@ -120,11 +120,7 @@ void loop(){
 
   run();
 
-  /*Serial.print(pos.pos_vel_x);
-  Serial.print(",");
-  Serial.println(pos.ang_x);*/
-
-  //Serial.println(voltage);
+  if(stop){estado=BLOQUEADO;}
 
   if(estado==PREPARADO || estado==BLOQUEADO){         //si no estamos volando motor=0
     Potencia_Motor(0);
@@ -145,16 +141,17 @@ void loop(){
       reset_PID_integrales();
 
       altitud_setpoint=altura_min;
-      pos.ang_z=0;
+      IMU.ang_z=0;
       pos.pos_vel_x=0;
       pos.pos_vel_y=0;
       pos.pos_x=0;
       pos.pos_y=0;
       opflow_pos_x=0;
       opflow_pos_y=0;
-      pos.ang_z=0;
+      IMU.ang_z=0;
 
       camino_rest();
+      log_rest_time();
 
       proceso_activo("Control_atitud", true);
       proceso_activo("log_datos", true);
@@ -211,7 +208,8 @@ void loop(){
     }
   }
 
-  if((estado==VOLANDO ||estado==ATERRIZAGE) && (pos.ang_x>50 or pos.ang_x<-50 or pos.ang_y>50 or pos.ang_y<-50)){   //Parada de emergencia
+  if((estado==VOLANDO ||estado==ATERRIZAGE) && (IMU.ang_x>50 or IMU.ang_x<-50 or IMU.ang_y>50 or IMU.ang_y<-50)){   //Parada de emergencia
+    
     while(true){
       Potencia_Motor(0);
       delay(100);

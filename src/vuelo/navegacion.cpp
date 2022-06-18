@@ -3,21 +3,92 @@
 
 #include <SD.h>
 #include <SPI.h>
-//#include <string>
 #include <vector>
-#include"vuelo/data_log.h"
-
-using namespace std;
+#include "vuelo/data_log.h"
+#include <Arduino.h>
+#include "vuelo/Glovales.h"
+#include "vuelo/filter.h"
+#include <map>
 
 #define nombre_camino "camino.txt"
 
-vector<pair<String,pair<int,int>>> vec(10);
+//using namespace std;
+
+typedef struct comando{
+    String comando;
+    int arg1,arg2;
+};
+
+std::vector<comando> vec;
+
+typedef struct instru{
+    int arg;
+    bool (*funct)(int,int);
+};
+
+std::map<String, instru> lista_comandos;
+
+long tiempo_cam;
+float alt_last_setpoint=0;
+float pos_setpoint_x_last=0;
+
+bool Peril_intruccion(int p,int n){
+    //perfil =p;
+    return true;
+}
+
+bool Altitud_intruccion(int a,int t){
+    if(millis()-tiempo_cam>=100){
+        tiempo_cam=millis();
+        double media =(float)(a-alt_last_setpoint)/t;
+        media/=10;
+        altitud_setpoint+=media;
+        altitud_setpoint=constrain(altitud_setpoint,0,a);
+        if(altitud_setpoint>=a){
+            tiempo_cam=millis();
+            alt_last_setpoint=a;
+            return true;
+        }
+    }
+    return false;
+}
+
+bool Esperar_intruccion(int t,int n){
+    if(millis()-tiempo_cam>=t*1000){
+        tiempo_cam=millis();
+        return true;
+    }
+    return false;
+}
+
+bool Cordenada_X_intruccion(int x,int t){
+    if(millis()-tiempo_cam>=100){
+        tiempo_cam=millis();
+        double media =(float)(x-pos_setpoint_x_last)/t;
+        media/=10;
+        pos_setpoint_x+=media;
+        pos_setpoint_x=constrain(pos_setpoint_x,0,x);
+        if(pos_setpoint_x>=x){
+            tiempo_cam=millis();
+            pos_setpoint_x_last=x;
+            return true;
+        }
+    }
+    return false;
+}
+
+bool Cordenada_Y_intruccion(int p,int n){
+    //perfil =p;
+    return true;
+}
+
+bool Aterrizage_intruccion(int p,int n){
+    estado=ATERRIZAGE;
+    return false;
+}
 
 File cam;
-
-byte estado_camino;
 int instruccion=0;
-String men_camino;
 
 void init_camino(){
     if(SD.exists(nombre_camino)){
@@ -26,129 +97,109 @@ void init_camino(){
         while(true) Serial.println("Camino no encontrado");
     }
 
+    /*
+    Perfil n
+    Altitud alt tiempo(seg)
+    Esperar tiempo(seg)
+    Cordenada_X X tiempo(seg)
+    Cordenada_Y Y tiempo(seg)
+    Aterrizage  */
+    lista_comandos["Perfil"].arg=1;
+    lista_comandos["Perfil"].funct=&Peril_intruccion;
+    lista_comandos["Altitud"].arg=2;
+    lista_comandos["Altitud"].funct=&Altitud_intruccion;
+    lista_comandos["Esperar"].arg=1;
+    lista_comandos["Esperar"].funct=&Esperar_intruccion;
+    lista_comandos["Cordenada_X"].arg=2;
+    lista_comandos["Cordenada_X"].funct=&Cordenada_X_intruccion;
+    lista_comandos["Cordenada_y"].arg=2;
+    lista_comandos["Cordenada_y"].funct=&Cordenada_Y_intruccion;
+    lista_comandos["Aterrizage"].arg=0;
+    lista_comandos["Aterrizage"].funct=&Aterrizage_intruccion;
+
     descargar_camino();
 
     log_set_canal_int("instruccion",&instruccion);
     log_set_canal_double("pos_setpoint_x",&pos_setpoint_x);
     log_set_canal_double("pos_setpoint_y",&pos_setpoint_y);
-    
 }
 
+byte estado_lectura;
+String men_camino;
+comando leyendo;
+
 void descargar_camino(){
-
     cam=SD.open(nombre_camino);
-
+delay(1000);
     while(cam.available()){
         char c=cam.read();
 
-        if(c==' ' || c=='\n'){
-            switch (estado_camino){
-            case 0:
-                estado_camino=1;
-                vec[instruccion].first=men_camino;
+        if(c=='\n'){
+            String s="";
+            men_camino+=' ';
+            leyendo.arg1=0;
+            leyendo.arg2=0;
+            for(int i=0;i<men_camino.length();i++){
+                if(men_camino[i]==' '){
+                    switch (estado_lectura){
+                        case 0:
+                            leyendo.comando=s;
+                            estado_lectura++;
+                        break;
 
-                if(vec[instruccion].first=="Aterrizage"){
-                    vec[instruccion].second.first=-1;
-                    vec[instruccion].second.second=-1;
-                    instruccion++;
-                    estado_camino=0;
+                        case 1:
+                            leyendo.arg1=atoi(s.c_str());
+                            estado_lectura++;
+                        break;
+
+                        case 2:
+                            leyendo.arg2=atoi(s.c_str());
+                            estado_lectura++;
+                        break;
+                    }
+                    s="";
+                }else s+=men_camino[i];
+            }
+            //Comprobar que comando existe y numero de argumentos correcto
+            if(lista_comandos.count(leyendo.comando)>0){
+                if(lista_comandos[leyendo.comando].arg!=estado_lectura-1){
+                    Serial.print("ERROR EN ");
+                    Serial.print(vec.size()+1);
+                    Serial.print(" INSTRUCCION. SE INTRODUJERON ");
+                    Serial.print(estado_lectura-1);
+                    Serial.print(" ARGUMENTOS Y SE ESPERABA ");
+                    Serial.println(lista_comandos[leyendo.comando].arg);
+                    stop=true;
                 }
-                break;
-            case 1:
-                if(vec[instruccion].first=="Altitud"){
-                    vec[instruccion].second.first=atoi(men_camino.c_str());
-                    estado_camino++;
-                }else if(vec[instruccion].first=="Esperar"){
-                    vec[instruccion].second.first=atoi(men_camino.c_str());
-                    vec[instruccion].second.second=-1;
-                    instruccion++;
-                    estado_camino=0;
-                }else if(vec[instruccion].first=="CordenadaX"){
-                    vec[instruccion].second.first=atoi(men_camino.c_str());
-                    estado_camino++;
-                }else if(vec[instruccion].first=="Cordenada_Y"){
-                    vec[instruccion].second.first=atoi(men_camino.c_str());
-                    estado_camino++;
-                }
-                break;
-            case 2:
-                if(vec[instruccion].first=="Altitud"){
-                    vec[instruccion].second.second=atoi(men_camino.c_str());
-                    instruccion++;
-                    estado_camino=0;
-                }else if(vec[instruccion].first=="CordenadaX"){
-                    vec[instruccion].second.second=atoi(men_camino.c_str());
-                    instruccion++;
-                    estado_camino=0;
-                }else if(vec[instruccion].first=="Cordenada_Y"){
-                    vec[instruccion].second.second=atoi(men_camino.c_str());
-                    instruccion++;
-                    estado_camino=0;
-                }
-                break;
+            }else{
+                    stop=true;
+                Serial.print("ERROR EN ");
+                Serial.print(vec.size()+1);
+                Serial.println(" INSTRUCCION. COMANDO NO EXISTE");
             }
 
-        men_camino="";
-        }else{
-            men_camino+=c;
-        }
+            vec.push_back(leyendo);
+            men_camino="";
+            estado_lectura=0;
+        }else men_camino+=c;
     }
+
+
     cam.close();
 
-    //delay(5000);
-
-    for(int i=0;i<=instruccion-1;i++){
-        /*Serial.println(vec[i].first);
-        Serial.println(vec[i].second.first);
-        Serial.println(vec[i].second.second);*/
-    }
+   /*for(int i=0;i<vec.size();i++){
+        Serial.println(vec[i].comando);
+        Serial.println(vec[i].arg1);
+        Serial.println(vec[i].arg2);
+   }*/
 }
-
-int instruccion_ejecutada=0;
-long tiempo_cam;
-float alt_last_setpoint=0;
-float pos_setpoint_x_last=0;
 
 void camino_rest(){
     tiempo_cam=millis();
-    instruccion_ejecutada=0;
+    instruccion=0;
 }
 
 void camino(){
-
-    if(vec[instruccion_ejecutada].first=="Altitud"){
-        if(millis()-tiempo_cam>=100){
-            tiempo_cam=millis();
-            double media =(float)(vec[instruccion_ejecutada].second.first-alt_last_setpoint)/vec[instruccion_ejecutada].second.second;
-            media/=10;
-            altitud_setpoint+=media;
-            altitud_setpoint=constrain(altitud_setpoint,0,vec[instruccion_ejecutada].second.first);
-            if(altitud_setpoint>=vec[instruccion_ejecutada].second.first){
-                tiempo_cam=millis();
-                alt_last_setpoint=vec[instruccion_ejecutada].second.first;
-                instruccion_ejecutada++;
-            }
-        }
-    }else if(vec[instruccion_ejecutada].first=="Esperar"){
-        if(millis()-tiempo_cam>=vec[instruccion_ejecutada].second.first*1000){
-            instruccion_ejecutada++;
-            tiempo_cam=millis();
-        }
-    }else if(vec[instruccion_ejecutada].first=="CordenadaX"){
-        if(millis()-tiempo_cam>=100){
-            tiempo_cam=millis();
-            double media =(float)(vec[instruccion_ejecutada].second.first-pos_setpoint_x_last)/vec[instruccion_ejecutada].second.second;
-            media/=10;
-            pos_setpoint_x+=media;
-            pos_setpoint_x=constrain(pos_setpoint_x,0,vec[instruccion_ejecutada].second.first);
-            if(pos_setpoint_x>=vec[instruccion_ejecutada].second.first){
-                tiempo_cam=millis();
-                pos_setpoint_x_last=vec[instruccion_ejecutada].second.first;
-                instruccion_ejecutada++;
-            }
-        }
-    }else if(vec[instruccion_ejecutada].first=="Aterrizage"){
-        estado=ATERRIZAGE;
-    }
-    //Serial.println(pos_setpoint_x);
+    if(lista_comandos[vec[instruccion].comando].funct(vec[instruccion].arg1,vec[instruccion].arg2))instruccion++;
+    //Serial.println(pos_setpoint_x);     //Cordenada_X 5 10
 }

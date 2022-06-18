@@ -34,6 +34,12 @@ vector<float (*)()> vals_especial;
 
 vector<var_alog> vars;
 
+long time;
+
+void log_rest_time(){
+  time=millis();
+}
+
 float dou(int inx){
   return *vals_dou[inx];
 }
@@ -101,7 +107,7 @@ void log_set_canal_esp(String n, float (*v)()){
 
 void log(float dt){
   data_buf[dir_act]="";
-  data_buf[dir_act]+=String(millis()/1000.f);
+  data_buf[dir_act]+=String((millis()-time)/1000.f);
   for(int i=0;i<vars.size();i++){
     data_buf[dir_act]+=",";
     data_buf[dir_act]+=String(vars[i].var(vars[i].inx));

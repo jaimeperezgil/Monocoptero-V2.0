@@ -6,23 +6,21 @@
 #include <Wire.h>
 #include "VL53L0X.h"
 
-
-
-typedef struct poss{
-    float ang_x, ang_y, ang_z;
-    float acc_x, acc_y, acc_z;
-    double vel_x, vel_y, vel_z;
-    double mag_x, mag_y, mag_z;
-
-    double pos_vel_x, pos_vel_y;
-    double pos_x, pos_y;
-
-    double pos_acc_vel_x, pos_acc_vel_y;
-
-    double of_imu_x;
-    double of_imu_y;
+typedef struct IMUU{
+  float ang_x, ang_y, ang_z;
+  float acc_x, acc_y, acc_z;
+  double vel_x, vel_y, vel_z;
+  double mag_x, mag_y, mag_z;
 };
-extern poss pos;
+
+typedef struct POS{
+  double pos_vel_x, pos_vel_y;
+  double pos_x, pos_y;
+  double pos_acc_vel_x, pos_acc_vel_y;
+};
+
+extern POS pos;
+extern IMUU IMU;
 
 extern double opflow_pos_x;
 extern double opflow_pos_y;
@@ -51,6 +49,8 @@ extern unsigned long tiempo;
 extern byte pot_motor;
 extern double altitud_setpoint;
 extern bool inicio_remoto;
+
+extern bool stop;
 
 typedef enum {
   E_STOP,

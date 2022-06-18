@@ -66,7 +66,7 @@ void recibir(float dt){
     //PID_y.rest_int();
     //PID_z.rest_int();
 
-    pos.ang_z=0;
+    IMU.ang_z=0;
 
     pos.pos_vel_x=0;
     pos.pos_vel_y=0;
@@ -98,13 +98,13 @@ void TLM_run(){
       id_radio++;
       data.t=millis();
 
-      data.v1=pos.ang_x;
-      data.v2=pos.ang_y;
-      data.v3=pos.ang_z;
+      data.v1=IMU.ang_x;
+      data.v2=IMU.ang_y;
+      data.v3=IMU.ang_z;
 
-      data.v4=pos.vel_x;
-      data.v5=pos.vel_y;
-      data.v6=pos.vel_z;
+      data.v4=IMU.vel_x;
+      data.v5=IMU.vel_y;
+      data.v6=IMU.vel_z;
 
       //id_radio=0;
 

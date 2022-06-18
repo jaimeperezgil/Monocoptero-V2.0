@@ -2,7 +2,8 @@
 #include "Glovales.h"
 
 estados estado;
-poss pos;
+POS pos;
+IMUU IMU;
 
 float voltage;
 int altitud;
@@ -13,6 +14,8 @@ int set_alt=alt;
 byte pDOP=100;
 double altitud_setpoint = alt;
 bool inicio_remoto=false;
+
+bool stop=false;
 
 double opflow_pos_x=0;
 double opflow_pos_y=0;

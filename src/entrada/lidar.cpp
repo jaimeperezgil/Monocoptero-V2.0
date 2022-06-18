@@ -1,5 +1,8 @@
 
 #include "lidar.h"
+#include "Arduino.h"
+#include "Ajustes.h"
+#include "vuelo/Glovales.h"
 
 //pt1Filter_t filtro_medi_alt;
 

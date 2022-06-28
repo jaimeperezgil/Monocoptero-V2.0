@@ -80,8 +80,8 @@ void pid_setup(){
   control_pos_y.constantes(-0.06,-0.005,-0);
   ///////////////////////////////////////////////////////
 
-  control_pos_vel_x.constantes(0,0,0.07);
-  control_pos_vel_y.constantes(0,0,-0.07);
+  control_pos_vel_x.constantes(0,0,0.04);
+  control_pos_vel_y.constantes(0,0,-0.04);
 
   pt1FilterInit(&filtro_pos_x,1,0.001);
   pt1FilterInit(&filtro_pos_y,1,0.001);

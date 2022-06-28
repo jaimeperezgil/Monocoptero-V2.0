@@ -14,14 +14,14 @@
 
 //using namespace std;
 
-typedef struct comando{
+struct comando{
     String comando;
     int arg1,arg2;
 };
 
 std::vector<comando> vec;
 
-typedef struct instru{
+struct instru{
     int arg;
     bool (*funct)(int,int);
 };
